@@ -5,12 +5,12 @@ mixin PokeText {
   static const welcomeDesc = "Thousands of data compiled into one place";
   static const welcomeButton = "Check PokèDex";
 
-  /// Pokedex List
+  /// Pokedex Screen
   static const pokedexTitle = "PokèDex";
   static const pokedexDesc = "All Generation totaling %d Pokemon";
   static const loadMore = "Load More ...";
 
-  /// Pokemon Detail
+  /// Detail Screen
   static const weight = "Weight";
   static const height = "Height";
   static const abilities = "Abilities";
@@ -19,4 +19,10 @@ mixin PokeText {
   static const otherImages = "Other Images";
   static const stat = "Stats";
   static const evolution = "Evolution";
+
+  /// Type Screen
+  static const home = "Home";
+  static const typeScreenTitle = "Pokemon with %s";
+  static const pageItemCount = "per page";
+  static const totalItem = "Total Data";
 }
