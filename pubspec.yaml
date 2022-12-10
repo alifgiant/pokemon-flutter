@@ -8,6 +8,8 @@ version: 1.0.0+1
 environment:
   sdk: '>=2.18.2 <3.0.0'
 
+isar_version: &isar_version 3.0.5 # define the version to be used
+
 dependencies:
   flutter:
     sdk: flutter
@@ -17,8 +19,8 @@ dependencies:
   provider: ^6.0.4
   go_router: ^5.2.4
   equatable: ^2.0.5
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
+  isar: *isar_version
+  isar_flutter_libs: *isar_version
   # view
   google_fonts: ^3.0.1
   cached_network_image: ^3.2.3
@@ -28,10 +30,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
   build_runner: ^2.3.2
-  hive_generator: ^2.0.0
+  isar_generator: *isar_version
   # unit test
-  mocktail: ^0.3.0
-  mocktail_image_network: ^0.3.1
+  mockito: ^5.3.2
+  network_image_mock: ^2.1.1
 
 flutter:
   uses-material-design: true
