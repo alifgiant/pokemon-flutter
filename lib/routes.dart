@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokemon/core/utils/page_switcher_builder.dart';
 import 'package:pokemon/screens/detail_screen.dart';
 import 'package:pokemon/screens/home_screen.dart';
-import 'package:pokemon/screens/pokedex_screen.dart';
+import 'package:pokemon/screens/pokedex/pokedex_screen.dart';
 import 'package:pokemon/screens/type_screen.dart';
 
 final appRouter = GoRouter(

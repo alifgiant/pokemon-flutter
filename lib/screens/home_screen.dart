@@ -38,12 +38,10 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     child: const Text(PokeText.welcomeButton),
-                    onPressed: () =>
-                        context.push('/pokedex', extra: controller),
-                    // onPressed: () {
-                    //   print(controller);
-                    //   context.push('/pokedex', extra: controller);
-                    // },
+                    onPressed: () => context.push(
+                      '/pokedex',
+                      extra: controller,
+                    ),
                   ),
                 ],
               ),
@@ -52,27 +50,6 @@ class HomeScreen extends StatelessWidget {
         );
       },
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: PokeImage.logo.toImage(),
-    //     actions: [
-    //       IconButton(
-    //         icon: const Icon(Icons.menu),
-    //         onPressed: () {},
-    //       ),
-    //     ],
-    //   ),
-    //   body: Padding(
-    //     padding: const EdgeInsets.all(24),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         image(screenWidth: MediaQuery.of(context).size.width),
-    //         ...contents(context),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   Widget image({required double screenWidth}) {
