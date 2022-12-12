@@ -7,65 +7,130 @@ import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/network_poke_image.dart';
 import 'package:pokemon/core/utils/string_ext.dart';
+import 'package:pokemon/interactor/get_pokemon_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/detail/short_detail_view.dart';
+import 'package:pokemon/service/api/pokemon_api.dart';
+import 'package:pokemon/service/local/pokemon_local.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../home/poke_app_bar.dart';
 import '../home/poke_drawer.dart';
 
-class DetailScreen extends StatelessWidget {
-  DetailScreen({super.key, required this.pokemon});
+class DetailScreen extends StatefulWidget {
+  const DetailScreen({super.key, required this.pokemon});
 
   final Pokemon pokemon;
-  final PokemonDetail pokemonDetail = _pokemonDetail;
+
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  bool isReady = false;
+  bool hasError = false;
+
+  late PokemonDetail _pokemonDetail;
+
+  final _refreshController = RefreshController(initialRefresh: false);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // executes after build
+      Future.microtask(() async {
+        loadData();
+      });
+    });
+  }
+
+  Future loadData() async {
+    await Future.delayed(Duration(seconds: 1));
+    final result = await GetPokemonUsecase(PokemonLocal(), PokemonApi())
+        .start(widget.pokemon.id);
+
+    if (result.isRight()) {
+      setState(() {
+        _pokemonDetail = result.asRight();
+        isReady = true;
+        hasError = false;
+      });
+      _refreshController.refreshCompleted();
+    } else {
+      setState(() {
+        isReady = true;
+        hasError = true;
+      });
+      _refreshController.refreshFailed();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PokeAppBar(),
       endDrawer: const PokeDrawer(),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 12),
-        children: [
-          ShortDetailView(pokemon: pokemon),
-          const SizedBox(height: 32),
-          ShortDetailView.sectionTitle(PokeText.otherImages),
-          const SizedBox(height: 8),
-          Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 21,
-            runSpacing: 10,
-            children: _pokemonDetail.otherImages
-                .map((e) => NetworkPokeImage(imageUrl: e, width: 100))
-                .toList(),
-          ),
-          const SizedBox(height: 32),
-          ShortDetailView.sectionTitle(PokeText.stat),
-          const SizedBox(height: 12),
-          Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 21,
-            runSpacing: 21,
-            children: _pokemonDetail.pokeStats.map((e) => itemStat(e)).toList(),
-          ),
-          const SizedBox(height: 32),
-          ShortDetailView.sectionTitle(PokeText.evolution),
-          const SizedBox(height: 12),
-          Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 21,
-            runSpacing: 21,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              for (final evo in _pokemonDetail.evolutions.asMap().entries) ...[
-                itemEvolution(context, evo.key, evo.value),
-                if (evo.key != _pokemonDetail.evolutions.length - 1)
-                  const Icon(Icons.arrow_right_alt_rounded),
-              ],
-            ],
-          ),
-        ],
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: () => loadData(),
+        enablePullDown: true,
+        child: chooseBody(),
       ),
+    );
+  }
+
+  Widget chooseBody() {
+    if (!isReady) return const Center(child: CircularProgressIndicator());
+    if (hasError) {
+      return const Center(child: Text('Please Reload, Pull down screen'));
+    } else {
+      return showContent(context);
+    }
+  }
+
+  Widget showContent(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 12),
+      children: [
+        ShortDetailView(pokemon: widget.pokemon),
+        const SizedBox(height: 32),
+        ShortDetailView.sectionTitle(PokeText.otherImages),
+        const SizedBox(height: 8),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 21,
+          runSpacing: 10,
+          children: _pokemonDetail.otherImages
+              .map((e) => NetworkPokeImage(imageUrl: e, width: 100))
+              .toList(),
+        ),
+        const SizedBox(height: 32),
+        ShortDetailView.sectionTitle(PokeText.stat),
+        const SizedBox(height: 12),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 21,
+          runSpacing: 21,
+          children: _pokemonDetail.pokeStats.map((e) => itemStat(e)).toList(),
+        ),
+        const SizedBox(height: 32),
+        ShortDetailView.sectionTitle(PokeText.evolution),
+        const SizedBox(height: 12),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 21,
+          runSpacing: 21,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            for (final evo in _pokemonDetail.evolutions.asMap().entries) ...[
+              itemEvolution(context, evo.key, evo.value),
+              if (evo.key != _pokemonDetail.evolutions.length - 1)
+                const Icon(Icons.arrow_right_alt_rounded),
+            ],
+          ],
+        ),
+      ],
     );
   }
 
@@ -175,26 +240,3 @@ class DetailScreen extends StatelessWidget {
     );
   }
 }
-
-final _pokemonDetail = PokemonDetail(
-  _pokemonDummy,
-  List.filled(5, _pokemonDummy.imageUrl),
-  List.filled(5, const PokeStat(67, 'Fight', PokeColor.fire)),
-  List.filled(5, _pokemonDummy),
-);
-
-const _pokemonDummy = Pokemon(
-  1,
-  'bulbasaur',
-  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
-  9999,
-  999,
-  [
-    PokemonType(1, 'Plant', PokeColor.plant),
-    PokemonType(1, 'Steel', PokeColor.grey),
-  ],
-  [
-    'Abilities 1',
-    'Abilities 2 (Hidden)',
-  ],
-);

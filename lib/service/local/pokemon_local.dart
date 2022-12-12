@@ -31,6 +31,15 @@ class PokemonLocal extends PokemonService {
     int offset,
     PokemonTypeRequest typeRequest,
   ) async {
-    return Left(Error());
+    return Right(PokemonResponse());
+    // return Left(Error());
+  }
+
+  Future savePokemonsByType(
+    int offset,
+    int id,
+    PokemonResponse pokemonResponse,
+  ) async {
+    // TODO(alifakbar): save pokemons
   }
 }
