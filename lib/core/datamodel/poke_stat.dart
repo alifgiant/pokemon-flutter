@@ -8,6 +8,11 @@ class PokeStat extends Equatable {
 
   const PokeStat(this.value, this.name);
 
+  @override
+  List<Object?> get props => [value, name];
+}
+
+extension ExtPokeStat on PokeStat {
   Color get color {
     if (value < 60) return PokeColor.fire;
     if (value < 70) return PokeColor.ground;
@@ -15,7 +20,4 @@ class PokeStat extends Equatable {
     if (value < 90) return PokeColor.fairy;
     return PokeColor.grass;
   }
-
-  @override
-  List<Object?> get props => [value, name];
 }
