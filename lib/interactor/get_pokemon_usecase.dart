@@ -42,11 +42,13 @@ extension on PokemonDetailResponse {
         pokemonType
             .map((e) => PokemonType(e.id, e.name, _getColor(e.name)))
             .toList(),
-        abilities,
+        abilities
+            .map((e) => "${e.name} ${e.isHidden ? '(hidden)' : ''}")
+            .toList(),
       ),
       images.toList(),
       pokeStats.map((e) => PokeStat(e.value, e.name)).toList(),
-      [], // TODO(alifakbar): evolutions
+      const [], // TODO(alifakbar): evolutions
     );
   }
 

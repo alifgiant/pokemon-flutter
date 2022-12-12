@@ -10,8 +10,7 @@ import 'package:pokemon/interactor/get_pokemons_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/pokedex/pokedex_item.dart';
 import 'package:pokemon/screens/pokedex/pokedex_sheet.dart';
-import 'package:pokemon/service/api/pokemon_api.dart';
-import 'package:pokemon/service/local/pokemon_local.dart';
+import 'package:provider/provider.dart';
 
 class PokedexScreen extends StatelessWidget {
   const PokedexScreen({super.key});
@@ -77,10 +76,8 @@ class _ForegroundState extends State<_PokedexScreenForeground> {
   }
 
   Future<void> _fetchPage(int pageKey) async {
-    final result = await GetPokemonsUsecase(
-      PokemonLocal(),
-      PokemonApi(),
-    ).start(offset: pageKey);
+    final result = await GetPokemonsUsecase(context.read(), context.read())
+        .start(offset: pageKey);
 
     if (result.isRight()) {
       final pokemons = result.asRight();

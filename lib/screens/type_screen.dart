@@ -12,8 +12,7 @@ import 'package:pokemon/core/utils/string_ext.dart';
 import 'package:pokemon/interactor/get_pokemons_by_type_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/pokedex/pokedex_sheet.dart';
-import 'package:pokemon/service/api/pokemon_api.dart';
-import 'package:pokemon/service/local/pokemon_local.dart';
+import 'package:provider/provider.dart';
 
 import '../core/utils/bg_circle.dart';
 import 'home/poke_app_bar.dart';
@@ -107,8 +106,8 @@ class _TypeScreenContentState extends State<_TypeScreenContent> {
 
   Future<void> _fetchPage(int pageKey) async {
     final result = await GetPokemonByTypeUsecase(
-      PokemonLocal(),
-      PokemonApi(),
+      context.read(),
+      context.read(),
     ).start(
       offset: pageKey,
       typeiId: widget.pokemonType.id,

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:pokemon/core/utils/either.dart';
 import 'package:pokemon/service/model/pokemon_model.dart';
-import 'package:http/http.dart' as http;
 
 import '../pokemon_service.dart';
 

@@ -2,6 +2,8 @@ import '../core/utils/either.dart';
 import 'model/pokemon_model.dart';
 
 abstract class PokemonService {
+  const PokemonService();
+
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
     int id,
   );

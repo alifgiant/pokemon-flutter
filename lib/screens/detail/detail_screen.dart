@@ -9,8 +9,7 @@ import 'package:pokemon/core/utils/string_ext.dart';
 import 'package:pokemon/interactor/get_pokemon_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/detail/short_detail_view.dart';
-import 'package:pokemon/service/api/pokemon_api.dart';
-import 'package:pokemon/service/local/pokemon_local.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../home/poke_app_bar.dart';
@@ -45,7 +44,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future loadData() async {
-    final result = await GetPokemonUsecase(PokemonLocal(), PokemonApi())
+    final result = await GetPokemonUsecase(context.read(), context.read())
         .start(widget.pokemon.id);
 
     if (result.isRight()) {

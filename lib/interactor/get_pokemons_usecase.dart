@@ -20,16 +20,12 @@ class GetPokemonsUsecase {
       fromLocal = false;
     }
 
-    if (response.isLeft()) {
-      return Left(response.asLeft());
-    }
-
+    if (response.isLeft()) return Left(response.asLeft());
     if (!fromLocal) await local.savePokemons(offset, response.asRight());
 
     final detailRequests = response.asRight().pokemons.map(
           (e) => _pokemonUsecase.start(e.id),
         );
-
     final pokemonsResult = await Future.wait(detailRequests);
     if (pokemonsResult.any((e) => e.isLeft())) {
       return Left(StateError('Internet Error, Please Retry'));

@@ -4,13 +4,27 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/routes.dart';
+import 'package:pokemon/service/api/pokemon_api.dart';
+import 'package:pokemon/service/local/pokemon_local.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   LicenseRegistry.addLicense(() async* {
     final license = await rootBundle.loadString('assets/fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
-  runApp(const MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+  final sharedPref = await SharedPreferences.getInstance();
+  runApp(MultiProvider(
+    providers: [
+      Provider.value(value: sharedPref),
+      Provider(create: (context) => PokemonLocal(context.read())),
+      Provider(create: (context) => PokemonApi()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
