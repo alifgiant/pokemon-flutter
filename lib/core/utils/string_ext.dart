@@ -6,3 +6,10 @@ extension StringFormat on String {
         .join(' ');
   }
 }
+
+extension IntFormat on num {
+  String toPokeId() {
+    final txtId = toString().padLeft(4, '0');
+    return '#$txtId';
+  }
+}

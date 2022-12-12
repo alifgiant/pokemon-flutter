@@ -6,11 +6,11 @@ abstract class PokemonService {
     int id,
   );
 
-  Future<Either<Error, PokemonResponse>> getPokemons(
+  Future<Either<Error, PokemonListResponse>> getPokemons(
     int offset,
   );
 
-  Future<Either<Error, PokemonResponse>> getPokemonsByType(
+  Future<Either<Error, PokemonListResponse>> getPokemonsByType(
     int offset,
     PokemonTypeRequest typeRequest,
   );

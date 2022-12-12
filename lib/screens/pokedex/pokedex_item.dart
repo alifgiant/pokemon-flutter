@@ -22,7 +22,6 @@ class PokedexItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final txtId = pokemon.id.toString().padLeft(3, '0');
     return Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       color: Colors.white,
@@ -39,7 +38,7 @@ class PokedexItem extends StatelessWidget {
                 ),
               ),
               Text(
-                '#$txtId',
+                pokemon.id.toPokeId(),
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,

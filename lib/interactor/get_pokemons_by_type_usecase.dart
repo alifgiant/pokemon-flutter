@@ -37,7 +37,7 @@ class GetPokemonByTypeUsecase {
   }
 }
 
-extension on PokemonResponse {
+extension on PokemonListResponse {
   List<Pokemon> toPokeList() {
     return List.filled(50, _pokemonDummy);
   }

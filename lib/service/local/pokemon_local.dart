@@ -8,7 +8,7 @@ class PokemonLocal extends PokemonService {
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
     int id,
   ) async {
-    return Right(PokemonDetailResponse());
+    return Left(Error());
   }
 
   Future savePokemon(int id, PokemonDetailResponse pokemonResponse) async {
@@ -16,29 +16,28 @@ class PokemonLocal extends PokemonService {
   }
 
   @override
-  Future<Either<Error, PokemonResponse>> getPokemons(
+  Future<Either<Error, PokemonListResponse>> getPokemons(
     int offset,
   ) async {
-    return Right(PokemonResponse());
+    return Left(Error());
   }
 
-  Future savePokemons(int offset, PokemonResponse pokemonResponse) async {
+  Future savePokemons(int offset, PokemonListResponse pokemonResponse) async {
     // TODO(alifakbar): save pokemons
   }
 
   @override
-  Future<Either<Error, PokemonResponse>> getPokemonsByType(
+  Future<Either<Error, PokemonListResponse>> getPokemonsByType(
     int offset,
     PokemonTypeRequest typeRequest,
   ) async {
-    return Right(PokemonResponse());
-    // return Left(Error());
+    return Left(Error());
   }
 
   Future savePokemonsByType(
     int offset,
     int id,
-    PokemonResponse pokemonResponse,
+    PokemonListResponse pokemonResponse,
   ) async {
     // TODO(alifakbar): save pokemons
   }

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/bg_circle.dart';
-import 'package:pokemon/interactor/get_pokemon_usecase.dart';
 import 'package:pokemon/interactor/get_pokemons_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/pokedex/pokedex_item.dart';
@@ -126,7 +124,10 @@ class _ForegroundState extends State<_PokedexScreenForeground> {
             ),
           ),
           const SizedBox(height: 16),
-          pokedexDesc(999999),
+
+          /// pokemon total count
+          /// https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiGjODhiPT7AhX4C7cAHeoyAaQQFnoECBsQAw&url=https%3A%2F%2Fwww.usatoday.com%2Fstory%2Fentertainment%2F2022%2F07%2F05%2Fhow-many-pokemon-are-there%2F7729404001%2F&usg=AOvVaw19DJMPUAUH-Njw0nn0r--y
+          pokedexDesc(1154),
         ],
       ),
     );

@@ -135,7 +135,6 @@ class _TypeScreenContentState extends State<_TypeScreenContent> {
       pagingController: _pagingController,
       builderDelegate: PagedChildBuilderDelegate<Pokemon>(
         itemBuilder: (ctx, pokemon, index) {
-          final txtId = pokemon.id.toString().padLeft(3, '0');
           final isFirst = index == 0;
 
           return ClipRRect(
@@ -167,7 +166,13 @@ class _TypeScreenContentState extends State<_TypeScreenContent> {
                         width: 1,
                       ),
                       const SizedBox(width: 20),
-                      Expanded(child: pokeInfo(txtId, pokemon, context)),
+                      Expanded(
+                        child: pokeInfo(
+                          pokemon.id.toPokeId(),
+                          pokemon,
+                          context,
+                        ),
+                      ),
                     ],
                   ),
                 ),
