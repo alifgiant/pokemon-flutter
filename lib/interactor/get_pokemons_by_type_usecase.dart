@@ -30,7 +30,7 @@ class GetPokemonByTypeUsecase {
     }
 
     final detailRequests = response.asRight().pokemons.map(
-          (e) => _pokemonUsecase.start(e.id),
+          (e) => _pokemonUsecase.start(e.name),
         );
     final pokemonsResult = await Future.wait(detailRequests);
     if (pokemonsResult.any((e) => e.isLeft())) {

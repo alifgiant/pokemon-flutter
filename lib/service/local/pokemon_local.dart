@@ -14,9 +14,9 @@ class PokemonLocal extends PokemonService {
 
   @override
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
-    int id,
+    String name,
   ) async {
-    final key = 'pokemon#$id';
+    final key = 'pokemon#$name';
     final savedString = pref.getString(key);
     if (savedString == null) return Left(StateError('No Cache'));
 
@@ -32,10 +32,10 @@ class PokemonLocal extends PokemonService {
     return Right(PokemonDetailResponse.fromJson(json));
   }
 
-  Future savePokemon(int id, PokemonDetailResponse pokemonResponse) async {
+  Future savePokemon(String name, PokemonDetailResponse pokemonResponse) async {
     final json = pokemonResponse.toJson();
 
-    final key = 'pokemon#$id';
+    final key = 'pokemon#$name';
     final now = clock.now().add(const Duration(days: 1));
     json[key] = now.millisecondsSinceEpoch.toString(); // add expire time
 

@@ -12,15 +12,15 @@ class GetPokemonUsecase {
 
   GetPokemonUsecase(this.local, this.remote);
 
-  Future<Either<Error, PokemonDetail>> start(int id) async {
-    final localData = await local.getPokemon(id);
+  Future<Either<Error, PokemonDetail>> start(String name) async {
+    final localData = await local.getPokemon(name);
     if (localData.isRight()) {
       return Right(localData.asRight().toPokemonDetail());
     }
 
-    final remoteResponse = await remote.getPokemon(id);
+    final remoteResponse = await remote.getPokemon(name);
     if (remoteResponse.isRight()) {
-      await local.savePokemon(id, remoteResponse.asRight());
+      await local.savePokemon(name, remoteResponse.asRight());
       return Right(remoteResponse.asRight().toPokemonDetail());
     }
 

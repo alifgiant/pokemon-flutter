@@ -11,10 +11,10 @@ const _rootPath = 'pokeapi.co';
 class PokemonApi extends PokemonService {
   @override
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
-    int id,
+    String name,
   ) async {
     try {
-      final uri = Uri.https(_rootPath, '/api/v2/pokemon/$id');
+      final uri = Uri.https(_rootPath, '/api/v2/pokemon/$name');
       final rawResult = await http.get(uri);
       final rawJson = jsonDecode(rawResult.body);
 

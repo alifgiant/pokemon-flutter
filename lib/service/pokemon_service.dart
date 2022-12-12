@@ -5,7 +5,7 @@ abstract class PokemonService {
   const PokemonService();
 
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
-    int id,
+    String name,
   );
 
   Future<Either<Error, PokemonListResponse>> getPokemons(

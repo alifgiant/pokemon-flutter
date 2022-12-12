@@ -45,7 +45,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Future loadData() async {
     final result = await GetPokemonUsecase(context.read(), context.read())
-        .start(widget.pokemon.id);
+        .start(widget.pokemon.name);
 
     if (result.isRight()) {
       setState(() {
