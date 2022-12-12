@@ -38,7 +38,7 @@ class PokemonDetailResponse {
   final int weight, height;
   final List<PokemonTypeResponse> pokemonType;
   final List<String> abilities;
-  final List<String> images;
+  final Set<String> images;
   final List<PokemonStatResponse> pokeStats;
   final List<String> evolutionsId;
 
@@ -69,12 +69,27 @@ class PokemonDetailResponse {
                 "${e['ability']['name']} ${e['is_hidden'] ? '(hidden)' : ''}",
           )
           .toList(),
-      [json['sprites']['other']['official-artwork']['front_default']],
+      {
+        json['sprites']['other']['official-artwork']['front_default'],
+        ...iterateImage(json['sprites']),
+      },
       (json['stats'] as List)
           .map((e) => PokemonStatResponse.fromJson(e))
           .toList(),
       [], // TODO(alifakbar): evolutions
     );
+  }
+
+  static Set<String> iterateImage(Map<String, dynamic> json) {
+    Set<String> images = {};
+    for (final value in json.values) {
+      if (value is String && value.endsWith('.png')) {
+        images.add(value);
+      } else if (value is Map<String, dynamic>) {
+        images.addAll(iterateImage(value));
+      }
+    }
+    return images;
   }
 }
 

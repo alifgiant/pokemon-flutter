@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokemon/core/datamodel/poke_stat.dart';
-import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
@@ -46,7 +45,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future loadData() async {
-    await Future.delayed(Duration(seconds: 1));
     final result = await GetPokemonUsecase(PokemonLocal(), PokemonApi())
         .start(widget.pokemon.id);
 
@@ -152,22 +150,26 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  stat.value.toString(),
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 28,
-                    color: stat.color,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    stat.value.toString(),
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 28,
+                      color: stat.color,
+                    ),
                   ),
-                ),
-                Text(
-                  stat.name.toTitleCase(),
-                  style: GoogleFonts.poppins(fontSize: 14, color: stat.color),
-                ),
-              ],
+                  Text(
+                    stat.name.toTitleCase(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(fontSize: 12, color: stat.color),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -184,7 +186,7 @@ class _DetailScreenState extends State<DetailScreen> {
     Color color = PokeColor.black;
     switch (index) {
       case 0:
-        color = PokeColor.plant;
+        color = PokeColor.grass;
         break;
       case 1:
         color = PokeColor.yellow;

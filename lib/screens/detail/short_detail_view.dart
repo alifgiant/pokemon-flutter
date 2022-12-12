@@ -59,14 +59,15 @@ class ShortDetailView extends StatelessWidget {
         Expanded(child: sectionTitle(title)),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: details
-              .map(
-                (e) => Text(
-                  details.length > 1 ? '• $e' : e,
-                  style: GoogleFonts.poppins(fontSize: 16),
-                ),
-              )
-              .toList(),
+          children: details.map(
+            (e) {
+              final name = e.toTitleCase();
+              return Text(
+                details.length > 1 ? '• $name' : name,
+                style: GoogleFonts.poppins(fontSize: 16),
+              );
+            },
+          ).toList(),
         ),
       ],
     );

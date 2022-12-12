@@ -50,7 +50,7 @@ const _pokemonDummy = Pokemon(
   9999,
   999,
   [
-    PokemonType(1, 'Plant', PokeColor.plant),
+    PokemonType(1, 'Plant', PokeColor.grass),
     PokemonType(1, 'Steel', PokeColor.grey),
   ],
   [
