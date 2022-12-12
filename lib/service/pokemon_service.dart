@@ -15,6 +15,6 @@ abstract class PokemonService {
 
   Future<Either<Error, PokemonListResponse>> getPokemonsByType(
     int offset,
-    PokemonTypeRequest typeRequest,
+    int id,
   );
 }

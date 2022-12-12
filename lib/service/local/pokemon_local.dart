@@ -79,8 +79,8 @@ class PokemonLocal extends PokemonService {
 
   @override
   Future<Either<Error, PokemonListResponse>> getPokemonsByType(
-    int offset,
-    PokemonTypeRequest typeRequest,
+    int offset, // unused
+    int id,
   ) async {
     return Left(Error());
   }

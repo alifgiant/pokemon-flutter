@@ -46,10 +46,21 @@ class PokemonApi extends PokemonService {
 
   @override
   Future<Either<Error, PokemonListResponse>> getPokemonsByType(
-    int offset,
-    PokemonTypeRequest typeRequest,
+    int offset, // unused
+    int id,
   ) async {
-    // return Left(Error());
-    return Right(PokemonListResponse(0, []));
+    try {
+      final uri = Uri.https(_rootPath, '/api/v2/type/$id');
+      final rawResult = await http.get(uri);
+      final rawJson = jsonDecode(rawResult.body);
+      final pokemons = (rawJson['pokemon'] as List)
+          .map(
+            (e) => e['pokemon'],
+          )
+          .toList();
+      return Right(PokemonListResponse.fromJson({'results': pokemons}));
+    } catch (e) {
+      return Left(StateError('Internet Error, Retry Please'));
+    }
   }
 }

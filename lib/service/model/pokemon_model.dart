@@ -1,7 +1,5 @@
 import 'package:pokemon/service/model/poke_regex.dart';
 
-class PokemonTypeRequest {}
-
 class PokemonListResponse {
   final int count;
   final List<PokemonResponse> pokemons;
@@ -11,7 +9,7 @@ class PokemonListResponse {
   factory PokemonListResponse.fromJson(Map<String, dynamic> json) {
     final pokeList = json['results'] as List;
     return PokemonListResponse(
-      json['count'],
+      json['count'] ?? pokeList.length,
       pokeList.map((e) => PokemonResponse.fromJson(e)).toList(),
     );
   }

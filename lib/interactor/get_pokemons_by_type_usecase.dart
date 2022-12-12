@@ -1,60 +1,48 @@
-import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
-import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/utils/either.dart';
 import 'package:pokemon/service/api/pokemon_api.dart';
 import 'package:pokemon/service/local/pokemon_local.dart';
-import 'package:pokemon/service/model/pokemon_model.dart';
+
+import 'get_pokemon_usecase.dart';
 
 class GetPokemonByTypeUsecase {
   final PokemonLocal local;
   final PokemonApi remote;
+  final GetPokemonUsecase _pokemonUsecase;
 
-  GetPokemonByTypeUsecase(this.local, this.remote);
+  GetPokemonByTypeUsecase(this.local, this.remote)
+      : _pokemonUsecase = GetPokemonUsecase(local, remote);
 
   Future<Either<Error, List<Pokemon>>> start({
     required int offset,
-    required int typeiId,
+    required int typeId,
   }) async {
-    final localData = await local.getPokemonsByType(
-      offset,
-      PokemonTypeRequest(),
-    );
-    if (localData.isRight()) {
-      return Right(localData.asRight().toPokeList());
+    bool fromLocal = true;
+    var response = await local.getPokemonsByType(offset, typeId);
+    if (response.isLeft()) {
+      response = await remote.getPokemonsByType(offset, typeId);
+      fromLocal = false;
     }
 
-    final remoteResponse = await remote.getPokemonsByType(
-      offset,
-      PokemonTypeRequest(),
-    );
-    if (remoteResponse.isRight()) {
-      await local.savePokemonsByType(offset, typeiId, remoteResponse.asRight());
-      return Right(remoteResponse.asRight().toPokeList());
+    if (response.isLeft()) return Left(response.asLeft());
+    if (!fromLocal) {
+      await local.savePokemonsByType(offset, typeId, response.asRight());
     }
 
-    return Left(StateError('No Result'));
+    final detailRequests = response.asRight().pokemons.map(
+          (e) => _pokemonUsecase.start(e.id),
+        );
+    final pokemonsResult = await Future.wait(detailRequests);
+    if (pokemonsResult.any((e) => e.isLeft())) {
+      return Left(StateError('Internet Error, Please Retry'));
+    }
+
+    return Right(pokemonsResult.map((e) => e.asRight()).toPokeList());
   }
 }
 
-extension on PokemonListResponse {
+extension on Iterable<PokemonDetail> {
   List<Pokemon> toPokeList() {
-    return List.filled(50, _pokemonDummy);
+    return map((e) => e.pokemon).toList();
   }
 }
-
-const _pokemonDummy = Pokemon(
-  1,
-  'bulbasaur',
-  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
-  9999,
-  999,
-  [
-    PokemonType(1, 'Plant', PokeColor.grass),
-    PokemonType(1, 'Steel', PokeColor.grey),
-  ],
-  [
-    'Abilities 1',
-    'Abilities 2 (Hidden)',
-  ],
-);

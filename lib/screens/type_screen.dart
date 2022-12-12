@@ -110,7 +110,7 @@ class _TypeScreenContentState extends State<_TypeScreenContent> {
       context.read(),
     ).start(
       offset: pageKey,
-      typeiId: widget.pokemonType.id,
+      typeId: widget.pokemonType.id,
     );
 
     if (result.isRight()) {
@@ -198,7 +198,7 @@ class _TypeScreenContentState extends State<_TypeScreenContent> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '#$txtId',
+          txtId,
           style: GoogleFonts.poppins(
             fontSize: 12,
             fontWeight: FontWeight.w700,
