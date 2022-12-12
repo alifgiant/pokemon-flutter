@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           ).animate(controller),
           child: Scaffold(
             appBar: const PokeAppBar(),
-            endDrawer: const PokeDrawer(),
+            endDrawer: const PokeDrawer(selectedMenu: PokeText.home),
             body: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

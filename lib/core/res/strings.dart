@@ -1,5 +1,10 @@
 /// contains all string on app
 mixin PokeText {
+  /// Drawer
+  static const homeMenu = "Home";
+  static const typeMenu = "Pokemon Type";
+  static const typeItemMenu = "Pokemon Type %s";
+
   /// Welcome Screen
   static const heroText = "All the Pokémon data you'll ever need in one place!";
   static const welcomeDesc = "Thousands of data compiled into one place";
