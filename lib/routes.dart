@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokemon/screens/detail_screen.dart';
+import 'package:pokemon/core/datamodel/pokemon.dart';
+import 'package:pokemon/screens/detail/detail_screen.dart';
 import 'package:pokemon/screens/home_screen.dart';
 import 'package:pokemon/screens/pokedex/pokedex_screen.dart';
 import 'package:pokemon/screens/type_screen.dart';
@@ -38,7 +39,9 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/detail',
-      builder: (context, state) => const DetailScreen(),
+      builder: (context, state) => DetailScreen(
+        pokemon: state.extra as Pokemon,
+      ),
     ),
     GoRoute(
       path: '/type',

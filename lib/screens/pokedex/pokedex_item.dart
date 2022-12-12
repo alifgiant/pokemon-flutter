@@ -5,6 +5,7 @@ import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/images.dart';
+import 'package:pokemon/core/utils/network_poke_image.dart';
 import 'package:pokemon/core/utils/string_ext.dart';
 
 class PokedexItem extends StatelessWidget {
@@ -32,14 +33,8 @@ class PokedexItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: CachedNetworkImage(
+                child: NetworkPokeImage(
                   imageUrl: pokemon.imageUrl,
-                  placeholder: (context, url) => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  errorWidget: (context, url, error) => Center(
-                    child: PokeImage.logo.toImage(),
-                  ),
                   height: 220,
                 ),
               ),

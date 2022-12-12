@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:pokemon/core/datamodel/poke_stat.dart';
 import 'package:pokemon/core/datamodel/poke_type.dart';
 
 class Pokemon extends Equatable {
@@ -26,4 +27,22 @@ class Pokemon extends Equatable {
         pokemonType,
         ...abilities,
       ];
+}
+
+class PokemonDetail extends Equatable {
+  final Pokemon pokemon;
+  final List<String> otherImages;
+  final List<PokeStat> pokeStats;
+  final List<Pokemon> evolutions;
+
+  const PokemonDetail(
+    this.pokemon,
+    this.otherImages,
+    this.pokeStats,
+    this.evolutions,
+  );
+
+  @override
+  List<Object?> get props =>
+      [pokemon, ...otherImages, ...pokeStats, ...evolutions];
 }
