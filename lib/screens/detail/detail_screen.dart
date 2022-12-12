@@ -4,11 +4,14 @@ import 'package:pokemon/core/datamodel/poke_stat.dart';
 import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
-import 'package:pokemon/core/res/images.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/network_poke_image.dart';
 import 'package:pokemon/core/utils/string_ext.dart';
+import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/detail/short_detail_view.dart';
+
+import '../home/poke_app_bar.dart';
+import '../home/poke_drawer.dart';
 
 class DetailScreen extends StatelessWidget {
   DetailScreen({super.key, required this.pokemon});
@@ -19,15 +22,8 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: PokeImage.logo.toImage(),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {},
-          ),
-        ],
-      ),
+      appBar: const PokeAppBar(),
+      endDrawer: const PokeDrawer(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 21, vertical: 12),
         children: [
@@ -62,7 +58,7 @@ class DetailScreen extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               for (final evo in _pokemonDetail.evolutions.asMap().entries) ...[
-                itemEvolution(evo.key, evo.value),
+                itemEvolution(context, evo.key, evo.value),
                 if (evo.key != _pokemonDetail.evolutions.length - 1)
                   const Icon(Icons.arrow_right_alt_rounded),
               ],
@@ -115,6 +111,7 @@ class DetailScreen extends StatelessWidget {
   }
 
   Widget itemEvolution(
+    BuildContext context,
     int index,
     Pokemon pokemon, {
     double size = 100,
@@ -134,42 +131,47 @@ class DetailScreen extends StatelessWidget {
         color = PokeColor.fire;
         break;
     }
-    return Column(
-      children: [
-        SizedBox(
-          width: size,
-          height: size,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                width: size,
-                height: size,
-                child: CircularProgressIndicator(
-                  value: 1,
-                  strokeWidth: 6,
-                  color: color,
+    return InkWell(
+      child: Column(
+        children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: size,
+                  height: size,
+                  child: CircularProgressIndicator(
+                    value: 1,
+                    strokeWidth: 6,
+                    color: color,
+                  ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: NetworkPokeImage(
-                  imageUrl: pokemon.imageUrl,
-                  width: 70,
+                Align(
+                  alignment: Alignment.center,
+                  child: NetworkPokeImage(
+                    imageUrl: pokemon.imageUrl,
+                    width: 70,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          pokemon.name.toTitleCase(),
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: color,
+          const SizedBox(height: 12),
+          Text(
+            pokemon.name.toTitleCase(),
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: color,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      onTap: () {
+        Routes.openDetailScreen(context, pokemon);
+      },
     );
   }
 }

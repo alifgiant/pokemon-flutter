@@ -21,6 +21,12 @@ class PokedexScreen extends StatelessWidget {
         children: [
           ...background(),
           foreground(),
+          SafeArea(
+            child: IconButton(
+              icon: const BackButtonIcon(),
+              onPressed: () => context.pop(),
+            ),
+          )
         ],
       ),
     );

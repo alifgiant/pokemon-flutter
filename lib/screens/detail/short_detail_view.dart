@@ -1,10 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
-import 'package:pokemon/core/res/images.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/network_poke_image.dart';
 import 'package:pokemon/core/utils/string_ext.dart';
@@ -48,7 +45,7 @@ class ShortDetailView extends StatelessWidget {
           Center(
             child: ElevatedButton(
               child: const Text(PokeText.moreDetail),
-              onPressed: () => context.push('/detail', extra: pokemon),
+              onPressed: () => Routes.openDetailScreen(context, pokemon),
             ),
           ),
       ],

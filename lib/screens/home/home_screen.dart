@@ -5,6 +5,8 @@ import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/images.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/page_switcher_builder.dart';
+import 'package:pokemon/screens/home/poke_app_bar.dart';
+import 'package:pokemon/screens/home/poke_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -19,15 +21,8 @@ class HomeScreen extends StatelessWidget {
             end: const Offset(0, -1.0),
           ).animate(controller),
           child: Scaffold(
-            appBar: AppBar(
-              title: PokeImage.logo.toImage(),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.menu),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+            appBar: const PokeAppBar(),
+            endDrawer: const PokeDrawer(),
             body: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

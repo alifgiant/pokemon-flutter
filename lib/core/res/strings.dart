@@ -22,7 +22,7 @@ mixin PokeText {
 
   /// Type Screen
   static const home = "Home";
-  static const typeScreenTitle = "Pokemon with %s";
+  static const typeScreenTitle = "Pokemon with Type %s";
   static const pageItemCount = "per page";
   static const totalItem = "Total Data";
 }

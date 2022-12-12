@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/screens/detail/detail_screen.dart';
-import 'package:pokemon/screens/home_screen.dart';
+import 'package:pokemon/screens/home/home_screen.dart';
 import 'package:pokemon/screens/pokedex/pokedex_screen.dart';
 import 'package:pokemon/screens/type_screen.dart';
 
@@ -45,13 +45,19 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/type',
-      builder: (context, state) => const TypeScreen(),
+      builder: (context, state) => TypeScreen(
+        pokemonType: state.extra as PokemonType,
+      ),
     ),
   ],
 );
 
 mixin Routes {
   static void openTypeScreen(BuildContext context, PokemonType type) {
-    context.push('/type?=${type.id}');
+    context.push('/type', extra: type);
+  }
+
+  static void openDetailScreen(BuildContext context, Pokemon pokemon) {
+    context.push('/detail', extra: pokemon);
   }
 }
