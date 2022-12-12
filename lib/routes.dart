@@ -5,6 +5,8 @@ import 'package:pokemon/screens/home_screen.dart';
 import 'package:pokemon/screens/pokedex/pokedex_screen.dart';
 import 'package:pokemon/screens/type_screen.dart';
 
+import 'core/datamodel/poke_type.dart';
+
 final appRouter = GoRouter(
   routes: [
     GoRoute(
@@ -44,3 +46,9 @@ final appRouter = GoRouter(
     ),
   ],
 );
+
+mixin Routes {
+  static void openTypeScreen(BuildContext context, PokemonType type) {
+    context.push('/type?=${type.id}');
+  }
+}

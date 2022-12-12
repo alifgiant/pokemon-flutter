@@ -1,15 +1,27 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pokemon/core/datamodel/poke_type.dart';
+import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/images.dart';
+import 'package:pokemon/core/utils/string_ext.dart';
 
 class PokedexItem extends StatelessWidget {
-  const PokedexItem({super.key});
+  const PokedexItem({
+    super.key,
+    required this.pokemon,
+    required this.onCardTap,
+    required this.onTypeTap,
+  });
+
+  final Pokemon pokemon;
+  final void Function(Pokemon) onCardTap;
+  final void Function(PokemonType) onTypeTap;
 
   @override
   Widget build(BuildContext context) {
-    int id = 1;
-    final txtId = id.toString().padLeft(3, '0');
+    final txtId = pokemon.id.toString().padLeft(3, '0');
     return Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       color: Colors.white,
@@ -19,9 +31,17 @@ class PokedexItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [PokeImage.bulbasaur.toImage(height: 220)],
+              Center(
+                child: CachedNetworkImage(
+                  imageUrl: pokemon.imageUrl,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => Center(
+                    child: PokeImage.logo.toImage(),
+                  ),
+                  height: 220,
+                ),
               ),
               Text(
                 '#$txtId',
@@ -32,7 +52,7 @@ class PokedexItem extends StatelessWidget {
                 ),
               ),
               Text(
-                'Poke Name',
+                pokemon.name.toTitleCase(),
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -41,18 +61,21 @@ class PokedexItem extends StatelessWidget {
               ),
               Wrap(
                 spacing: 12,
-                children: const [
-                  Chip(label: Text('Type 1')),
-                  Chip(label: Text('Type 2')),
-                  Chip(label: Text('Type 3')),
-                  Chip(label: Text('Type 4')),
-                  Chip(label: Text('Type 5')),
-                ],
+                children: pokemon.pokemonType
+                    .map(
+                      (e) => ActionChip(
+                        backgroundColor: e.color,
+                        label: Text(e.name.toTitleCase()),
+                        labelStyle: const TextStyle(color: Colors.white),
+                        onPressed: () => onTypeTap(e),
+                      ),
+                    )
+                    .toList(),
               ),
             ],
           ),
         ),
-        onTap: () {},
+        onTap: () => onCardTap(pokemon),
       ),
     );
   }

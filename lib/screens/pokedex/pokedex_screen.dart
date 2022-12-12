@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pokemon/core/datamodel/poke_type.dart';
+import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
+import 'package:pokemon/core/utils/bg_circle.dart';
+import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/pokedex/pokedex_item.dart';
+import 'package:pokemon/screens/pokedex/pokedex_sheet.dart';
 
 class PokedexScreen extends StatelessWidget {
   const PokedexScreen({super.key});
@@ -12,18 +17,26 @@ class PokedexScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: PokeColor.lightYellow,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/type');
-        },
-      ),
       body: Stack(
         children: [
-          // background
+          ...background(),
           foreground(),
         ],
       ),
     );
+  }
+
+  List<Widget> background() {
+    return [
+      const Align(
+        alignment: Alignment(-1, -0.7),
+        child: BgCircle(radius: 170),
+      ),
+      const Align(
+        alignment: Alignment(1, 0.7),
+        child: BgCircle(radius: 170),
+      ),
+    ];
   }
 
   Widget foreground() {
@@ -68,15 +81,43 @@ class PokedexScreen extends StatelessWidget {
   }
 
   Widget content() {
+    final pokemons = List.filled(99, _pokemonDummy);
     return ListView.separated(
       padding: const EdgeInsets.all(26),
-      itemCount: 99,
+      itemCount: pokemons.length,
       itemBuilder: (context, index) {
-        return const PokedexItem();
+        final pokemon = pokemons[index];
+        return PokedexItem(
+          key: ObjectKey(pokemon),
+          pokemon: pokemon,
+          onCardTap: (pokemon) => showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(42)),
+            ),
+            builder: (context) => PokedexSheet(pokemon: pokemon),
+          ),
+          onTypeTap: (type) => Routes.openTypeScreen(context, type),
+        );
       },
-      separatorBuilder: (context, index) {
-        return const SizedBox(height: 24);
-      },
+      separatorBuilder: (context, index) => const SizedBox(height: 24),
     );
   }
 }
+
+const _pokemonDummy = Pokemon(
+  1,
+  'bulbasaur',
+  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
+  9999,
+  999,
+  [
+    PokemonType(1, 'Plant', PokeColor.plant),
+    PokemonType(1, 'Steel', PokeColor.grey),
+  ],
+  [
+    'Abilities 1',
+    'Abilities 2 (Hidden)',
+  ],
+);
