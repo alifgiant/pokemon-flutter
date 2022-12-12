@@ -31,29 +31,21 @@ class GetPokemonUsecase {
 
 extension on PokemonDetailResponse {
   PokemonDetail toPokemonDetail() {
-    return _pokemonDetail;
+    return PokemonDetail(
+      Pokemon(
+        id,
+        name,
+        images.first,
+        weight,
+        height,
+        pokemonType
+            .map((e) => PokemonType(e.id, e.name, PokeColor.fire))
+            .toList(),
+        abilities,
+      ),
+      images,
+      pokeStats.map((e) => PokeStat(e.value, e.name, PokeColor.fire)).toList(),
+      [], // TODO(alifakbar): evolutions
+    );
   }
 }
-
-final _pokemonDetail = PokemonDetail(
-  _pokemonDummy,
-  List.filled(5, _pokemonDummy.imageUrl),
-  List.filled(5, const PokeStat(67, 'Fight', PokeColor.fire)),
-  List.filled(5, _pokemonDummy),
-);
-
-const _pokemonDummy = Pokemon(
-  1,
-  'bulbasaur',
-  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
-  9999,
-  999,
-  [
-    PokemonType(1, 'Plant', PokeColor.plant),
-    PokemonType(1, 'Steel', PokeColor.grey),
-  ],
-  [
-    'Abilities 1',
-    'Abilities 2 (Hidden)',
-  ],
-);

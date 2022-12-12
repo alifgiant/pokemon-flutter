@@ -6,23 +6,35 @@ import 'package:http/http.dart' as http;
 
 import '../pokemon_service.dart';
 
-const _rootPath = 'https://pokeapi.co/api/v2';
+const _rootPath = 'pokeapi.co';
 
 class PokemonApi extends PokemonService {
   @override
   Future<Either<Error, PokemonDetailResponse>> getPokemon(
     int id,
   ) async {
-    return Right(PokemonDetailResponse());
+    try {
+      final uri = Uri.https(_rootPath, '/api/v2/pokemon/$id');
+      final rawResult = await http.get(uri);
+      final rawJson = jsonDecode(rawResult.body);
+
+      return Right(PokemonDetailResponse.fromJson(rawJson));
+    } catch (e) {
+      return Left(StateError('Internet Error, Retry Please'));
+    }
   }
 
   @override
   Future<Either<Error, PokemonListResponse>> getPokemons(
-    int offset,
-  ) async {
+    int offset, {
+    int limit = 20,
+  }) async {
     try {
-      final uri = Uri.parse('$_rootPath/pokemon/')
-        ..replace(queryParameters: {});
+      final uri = Uri.https(
+        _rootPath,
+        '/api/v2/pokemon',
+        {'limit': limit.toString(), 'offset': offset.toString()},
+      );
       final rawResult = await http.get(uri);
       final rawJson = jsonDecode(rawResult.body);
 

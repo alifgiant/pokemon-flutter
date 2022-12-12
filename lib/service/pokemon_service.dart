@@ -7,8 +7,9 @@ abstract class PokemonService {
   );
 
   Future<Either<Error, PokemonListResponse>> getPokemons(
-    int offset,
-  );
+    int offset, {
+    int limit = 20,
+  });
 
   Future<Either<Error, PokemonListResponse>> getPokemonsByType(
     int offset,

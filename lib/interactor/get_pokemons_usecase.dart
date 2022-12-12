@@ -1,51 +1,46 @@
-import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
-import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/utils/either.dart';
+import 'package:pokemon/interactor/get_pokemon_usecase.dart';
 import 'package:pokemon/service/api/pokemon_api.dart';
 import 'package:pokemon/service/local/pokemon_local.dart';
-import 'package:pokemon/service/model/pokemon_model.dart';
 
 class GetPokemonsUsecase {
   final PokemonLocal local;
   final PokemonApi remote;
+  final GetPokemonUsecase _pokemonUsecase;
 
-  GetPokemonsUsecase(this.local, this.remote);
+  GetPokemonsUsecase(this.local, this.remote)
+      : _pokemonUsecase = GetPokemonUsecase(local, remote);
 
   Future<Either<Error, List<Pokemon>>> start({required int offset}) async {
-    final localData = await local.getPokemons(offset);
-    if (localData.isRight()) {
-      return Right(localData.asRight().toPokeList());
+    bool fromLocal = true;
+    var response = await local.getPokemons(offset);
+    if (response.isLeft()) {
+      response = await remote.getPokemons(offset);
+      fromLocal = false;
     }
 
-    final remoteResponse = await remote.getPokemons(offset);
-    if (remoteResponse.isRight()) {
-      await local.savePokemons(offset, remoteResponse.asRight());
-      return Right(remoteResponse.asRight().toPokeList());
+    if (response.isLeft()) {
+      return Left(response.asLeft());
     }
 
-    return Left(StateError('No Result'));
+    if (!fromLocal) await local.savePokemons(offset, response.asRight());
+
+    final detailRequests = response.asRight().pokemons.map(
+          (e) => _pokemonUsecase.start(e.id),
+        );
+
+    final pokemonsResult = await Future.wait(detailRequests);
+    if (pokemonsResult.any((e) => e.isLeft())) {
+      return Left(StateError('Internet Error, Please Retry'));
+    }
+
+    return Right(pokemonsResult.map((e) => e.asRight()).toPokeList());
   }
 }
 
-extension on PokemonListResponse {
+extension on Iterable<PokemonDetail> {
   List<Pokemon> toPokeList() {
-    return List.filled(50, _pokemonDummy);
+    return map((e) => e.pokemon).toList();
   }
 }
-
-const _pokemonDummy = Pokemon(
-  1,
-  'bulbasaur',
-  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
-  9999,
-  999,
-  [
-    PokemonType(1, 'Plant', PokeColor.plant),
-    PokemonType(1, 'Steel', PokeColor.grey),
-  ],
-  [
-    'Abilities 1',
-    'Abilities 2 (Hidden)',
-  ],
-);

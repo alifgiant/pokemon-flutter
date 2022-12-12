@@ -2,7 +2,7 @@ class Either<L, R> {
   final L? _left;
   final R? _right;
 
-  Either(this._left, this._right);
+  Either._(this._left, this._right);
 
   bool isRight() => _right != null;
   R asRight() => _right!;
@@ -12,9 +12,9 @@ class Either<L, R> {
 }
 
 class Right<L, R> extends Either<L, R> {
-  Right(R data) : super(null, data);
+  Right(R data) : super._(null, data);
 }
 
 class Left<L, R> extends Either<L, R> {
-  Left(L error) : super(error, null);
+  Left(L error) : super._(error, null);
 }
