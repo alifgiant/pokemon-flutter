@@ -1,5 +1,5 @@
 mixin PokeRegex {
-  static final patternId = RegExp(r'.+\/([0-9]+)');
+  static final patternId = RegExp(r'.*\/([0-9]+)');
 }
 
 extension ExtPokeRegex on String {

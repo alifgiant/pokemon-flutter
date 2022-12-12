@@ -63,4 +63,30 @@ class PokemonApi extends PokemonService {
       return Left(StateError('Internet Error, Retry Please'));
     }
   }
+
+  @override
+  Future<Either<Error, SpeciesResponse>> getSpecies(String name) async {
+    try {
+      final uri = Uri.https(_rootPath, '/api/v2/pokemon-species/$name');
+      final rawResult = await http.get(uri);
+      final rawJson = jsonDecode(rawResult.body);
+
+      return Right(SpeciesResponse.fromJson(rawJson['evolution_chain'] ?? {}));
+    } catch (e) {
+      return Left(StateError('Internet Error, Retry Please'));
+    }
+  }
+
+  @override
+  Future<Either<Error, EvolutionResponse>> getEvolutionChain(int id) async {
+    try {
+      final uri = Uri.https(_rootPath, '/api/v2/evolution-chain/$id');
+      final rawResult = await http.get(uri);
+      final rawJson = jsonDecode(rawResult.body);
+
+      return Right(EvolutionResponse.fromJson(rawJson['chain']));
+    } catch (e) {
+      return Left(StateError('Internet Error, Retry Please'));
+    }
+  }
 }

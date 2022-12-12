@@ -44,7 +44,6 @@ extension on PokemonDetailResponse {
       ),
       images.toList(),
       pokeStats.map((e) => PokeStat(e.value, e.name)).toList(),
-      const [], // TODO(alifakbar): evolutions
     );
   }
 }

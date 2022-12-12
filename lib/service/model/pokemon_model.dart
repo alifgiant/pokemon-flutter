@@ -23,20 +23,18 @@ class PokemonListResponse {
 class PokemonResponse {
   final String name;
   final int id;
-  final String _url;
 
-  PokemonResponse(this.name, this.id, this._url);
+  PokemonResponse(this.name, this.id);
 
   factory PokemonResponse.fromJson(Map<String, dynamic> json) {
     final id = json['url'].toString().getId();
     return PokemonResponse(
       json['name'].toString(),
       int.parse(id),
-      json['url'],
     );
   }
 
-  Map<String, dynamic> toJson() => {'name': name, 'url': _url};
+  Map<String, dynamic> toJson() => {'name': name, 'url': '/$id'};
 }
 
 class PokemonDetailResponse {
@@ -121,20 +119,18 @@ class PokemonDetailResponse {
 class PokemonTypeResponse {
   final String name;
   final int id;
-  final String _url;
 
-  PokemonTypeResponse(this.name, this.id, this._url);
+  PokemonTypeResponse(this.name, this.id);
 
   factory PokemonTypeResponse.fromJson(Map<String, dynamic> json) {
     final id = json['url'].toString().getId();
     return PokemonTypeResponse(
       json['name'],
       int.parse(id),
-      json['url'],
     );
   }
 
-  Map<String, dynamic> toJson() => {'name': name, 'id': id, 'url': _url};
+  Map<String, dynamic> toJson() => {'name': name, 'url': '/$id'};
 }
 
 class PokemonAbilityRespinse {
@@ -173,4 +169,59 @@ class PokemonStatResponse {
         'stat': {'name': name},
         'base_stat': value
       };
+}
+
+class SpeciesResponse {
+  final int id;
+
+  SpeciesResponse(this.id);
+
+  factory SpeciesResponse.fromJson(Map<String, dynamic> json) {
+    if (json.isEmpty) return SpeciesResponse(-1);
+
+    final id = json['url'].toString().getId();
+    return SpeciesResponse(int.parse(id));
+  }
+
+  Map<String, dynamic> toJson() => {'url': '/$id'};
+}
+
+class EvolutionResponse {
+  final List<String> species;
+
+  EvolutionResponse(this.species);
+
+  factory EvolutionResponse.fromJson(Map<String, dynamic> json) {
+    List<String> pokemons = iterateEvolution(json);
+
+    return EvolutionResponse(pokemons);
+  }
+
+  static List<String> iterateEvolution(Map<String, dynamic> json) {
+    List<String> pokemons = List.empty(growable: true);
+    pokemons.add(json['species']['name']);
+
+    final evolveTo = json['evolves_to'] as List;
+    if (evolveTo.isEmpty) return pokemons;
+
+    pokemons.addAll(iterateEvolution(evolveTo.first));
+    return pokemons;
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic>? all;
+    Map<String, dynamic>? prev;
+
+    for (final pokemon in species) {
+      final data = <String, dynamic>{
+        'species': {'name': pokemon},
+        'evolves_to': [],
+      };
+      all ??= data;
+
+      if (prev != null) prev['evolves_to'] = [data];
+      prev = data;
+    }
+    return all ?? {};
+  }
 }

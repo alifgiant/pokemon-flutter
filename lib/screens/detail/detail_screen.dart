@@ -6,6 +6,7 @@ import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/network_poke_image.dart';
 import 'package:pokemon/core/utils/string_ext.dart';
+import 'package:pokemon/interactor/get_evolution_usecase.dart';
 import 'package:pokemon/interactor/get_pokemon_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/detail/short_detail_view.dart';
@@ -29,6 +30,7 @@ class _DetailScreenState extends State<DetailScreen> {
   bool hasError = false;
 
   late PokemonDetail _pokemonDetail;
+  List<Pokemon> _evolutions = const [];
 
   final _refreshController = RefreshController(initialRefresh: false);
 
@@ -44,6 +46,13 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future loadData() async {
+    await Future.wait([
+      loadDetail(),
+      loadEvolution(),
+    ]);
+  }
+
+  Future loadDetail() async {
     final result = await GetPokemonUsecase(context.read(), context.read())
         .start(widget.pokemon.name);
 
@@ -60,6 +69,16 @@ class _DetailScreenState extends State<DetailScreen> {
         hasError = true;
       });
       _refreshController.refreshFailed();
+    }
+  }
+
+  Future loadEvolution() async {
+    final result = await GetEvolutionUsecase(context.read(), context.read())
+        .start(widget.pokemon.name);
+    if (result.isRight()) {
+      setState(() {
+        _evolutions = result.asRight();
+      });
     }
   }
 
@@ -112,21 +131,7 @@ class _DetailScreenState extends State<DetailScreen> {
           children: _pokemonDetail.pokeStats.map((e) => itemStat(e)).toList(),
         ),
         const SizedBox(height: 32),
-        ShortDetailView.sectionTitle(PokeText.evolution),
-        const SizedBox(height: 12),
-        Wrap(
-          alignment: WrapAlignment.start,
-          spacing: 21,
-          runSpacing: 21,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            for (final evo in _pokemonDetail.evolutions.asMap().entries) ...[
-              itemEvolution(context, evo.key, evo.value),
-              if (evo.key != _pokemonDetail.evolutions.length - 1)
-                const Icon(Icons.arrow_right_alt_rounded),
-            ],
-          ],
-        ),
+        if (_evolutions.isNotEmpty) ...evolutionSection()
       ],
     );
   }
@@ -174,6 +179,26 @@ class _DetailScreenState extends State<DetailScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> evolutionSection() {
+    return [
+      ShortDetailView.sectionTitle(PokeText.evolution),
+      const SizedBox(height: 12),
+      Wrap(
+        alignment: WrapAlignment.start,
+        spacing: 21,
+        runSpacing: 21,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          for (final evo in _evolutions.asMap().entries) ...[
+            itemEvolution(context, evo.key, evo.value),
+            if (evo.key != _evolutions.length - 1)
+              const Icon(Icons.arrow_right_alt_rounded),
+          ],
+        ],
+      ),
+    ];
   }
 
   Widget itemEvolution(

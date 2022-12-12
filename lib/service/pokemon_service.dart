@@ -17,4 +17,10 @@ abstract class PokemonService {
     int offset,
     int id,
   );
+
+  @override
+  Future<Either<Error, SpeciesResponse>> getSpecies(String name);
+
+  @override
+  Future<Either<Error, EvolutionResponse>> getEvolutionChain(int id);
 }

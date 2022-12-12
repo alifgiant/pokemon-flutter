@@ -33,13 +33,11 @@ class PokemonDetail extends Equatable {
   final Pokemon pokemon;
   final List<String> otherImages;
   final List<PokeStat> pokeStats;
-  final List<Pokemon> evolutions;
 
   const PokemonDetail(
     this.pokemon,
     this.otherImages,
     this.pokeStats,
-    this.evolutions,
   );
 
   @override
@@ -47,6 +45,11 @@ class PokemonDetail extends Equatable {
         pokemon,
         ...otherImages,
         ...pokeStats,
-        ...evolutions,
       ];
+}
+
+extension ExtPokemonDetail on Iterable<PokemonDetail> {
+  List<Pokemon> toPokeList() {
+    return map((e) => e.pokemon).toList();
+  }
 }

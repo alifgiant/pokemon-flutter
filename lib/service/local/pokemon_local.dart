@@ -82,7 +82,20 @@ class PokemonLocal extends PokemonService {
     int offset, // unused
     int id,
   ) async {
-    return Left(Error());
+    final key = 'type#$offset#$id';
+    final savedString = pref.getString(key);
+    if (savedString == null) return Left(StateError('No Cache'));
+
+    final json = jsonDecode(savedString);
+    if (json is! Map<String, dynamic>) return Left(StateError('Not valid'));
+
+    final expireTimeStr = int.parse(json[key]);
+    final expireTime = DateTime.fromMillisecondsSinceEpoch(expireTimeStr);
+
+    final now = clock.now();
+    if (now.isAfter(expireTime)) return Left(StateError('Expire'));
+
+    return Right(PokemonListResponse.fromJson(json));
   }
 
   Future savePokemonsByType(
@@ -90,6 +103,74 @@ class PokemonLocal extends PokemonService {
     int id,
     PokemonListResponse pokemonResponse,
   ) async {
-    // TODO(alifakbar): save pokemons
+    final json = pokemonResponse.toJson();
+
+    final key = 'type#$offset#$id';
+    final now = clock.now().add(const Duration(days: 1));
+    json[key] = now.millisecondsSinceEpoch.toString(); // add expire time
+
+    await pref.setString(key, jsonEncode(json));
+  }
+
+  @override
+  Future<Either<Error, EvolutionResponse>> getEvolutionChain(int id) async {
+    final key = 'evolution#$id';
+    final savedString = pref.getString(key);
+    if (savedString == null) return Left(StateError('No Cache'));
+
+    final json = jsonDecode(savedString);
+    if (json is! Map<String, dynamic>) return Left(StateError('Not valid'));
+
+    final expireTimeStr = int.parse(json[key]);
+    final expireTime = DateTime.fromMillisecondsSinceEpoch(expireTimeStr);
+
+    final now = clock.now();
+    if (now.isAfter(expireTime)) return Left(StateError('Expire'));
+
+    return Right(EvolutionResponse.fromJson(json));
+  }
+
+  Future saveEvolutionChain(
+    int id,
+    EvolutionResponse pokemonResponse,
+  ) async {
+    final json = pokemonResponse.toJson();
+
+    final key = 'evolution#$id';
+    final now = clock.now().add(const Duration(days: 1));
+    json[key] = now.millisecondsSinceEpoch.toString(); // add expire time
+
+    await pref.setString(key, jsonEncode(json));
+  }
+
+  @override
+  Future<Either<Error, SpeciesResponse>> getSpecies(String name) async {
+    final key = 'species#$name';
+    final savedString = pref.getString(key);
+    if (savedString == null) return Left(StateError('No Cache'));
+
+    final json = jsonDecode(savedString);
+    if (json is! Map<String, dynamic>) return Left(StateError('Not valid'));
+
+    final expireTimeStr = int.parse(json[key]);
+    final expireTime = DateTime.fromMillisecondsSinceEpoch(expireTimeStr);
+
+    final now = clock.now();
+    if (now.isAfter(expireTime)) return Left(StateError('Expire'));
+
+    return Right(SpeciesResponse.fromJson(json));
+  }
+
+  Future saveSpecies(
+    String name,
+    SpeciesResponse pokemonResponse,
+  ) async {
+    final json = pokemonResponse.toJson();
+
+    final key = 'species#$name';
+    final now = clock.now().add(const Duration(days: 1));
+    json[key] = now.millisecondsSinceEpoch.toString(); // add expire time
+
+    await pref.setString(key, jsonEncode(json));
   }
 }

@@ -34,9 +34,3 @@ class GetPokemonsUsecase {
     return Right(pokemonsResult.map((e) => e.asRight()).toPokeList());
   }
 }
-
-extension on Iterable<PokemonDetail> {
-  List<Pokemon> toPokeList() {
-    return map((e) => e.pokemon).toList();
-  }
-}
