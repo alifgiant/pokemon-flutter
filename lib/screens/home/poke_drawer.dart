@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/images.dart';
 import 'package:pokemon/core/res/strings.dart';
+import 'package:pokemon/core/utils/string_ext.dart';
+import 'package:pokemon/routes.dart';
 
 class PokeDrawer extends StatelessWidget {
   const PokeDrawer({super.key, this.selectedMenu, this.extra});
@@ -26,7 +29,6 @@ class PokeDrawer extends StatelessWidget {
   }
 
   List<_Menus> _createMenus(BuildContext context) {
-    // TODO(alifakbar): dynamic menu
     return [
       _HeaderMenus(),
       _TextMenus(
@@ -37,23 +39,16 @@ class PokeDrawer extends StatelessWidget {
       _TextMenus(
         title: PokeText.typeMenu,
         current: selectedMenu,
-        onTap: () {},
       ),
-      _TextMenus(
-        title: PokeText.typeItemMenu,
-        current: selectedMenu,
-        onTap: () => context.push('/'),
-      ),
-      _TextMenus(
-        title: PokeText.typeItemMenu,
-        current: selectedMenu,
-        onTap: () => context.push('/'),
-      ),
-      _TextMenus(
-        title: PokeText.typeItemMenu,
-        current: selectedMenu,
-        onTap: () => context.push('/'),
-      ),
+      for (final type in PokemonType.all)
+        _TextMenus(
+          title: PokeText.typeItemMenu.replaceAll(
+            '%s',
+            type.name.toTitleCase(),
+          ),
+          current: selectedMenu,
+          onTap: () => Routes.openTypeScreen(context, type),
+        ),
     ];
   }
 }
@@ -73,17 +68,23 @@ class _TextMenus extends _Menus {
   _TextMenus({
     required String title,
     required String? current,
-    required void Function() onTap,
+    void Function()? onTap,
   }) : super(
-          (ctx) => ListTile(
+          (ctx) {
+            final path = (current ?? '').toLowerCase();
+            final isSelected = title.toLowerCase().contains(path);
+
+            return ListTile(
               title: Text(
                 title,
                 style: GoogleFonts.poppins(
                   fontSize: 16,
-                  fontWeight: title == current ? FontWeight.w700 : null,
-                  color: title == current ? PokeColor.yellow : null,
+                  fontWeight: isSelected ? FontWeight.w700 : null,
+                  color: isSelected ? PokeColor.yellow : null,
                 ),
               ),
-              onTap: onTap),
+              onTap: onTap,
+            );
+          },
         );
 }

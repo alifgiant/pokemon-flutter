@@ -27,7 +27,7 @@ class TypeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PokeAppBar(),
-      endDrawer: const PokeDrawer(),
+      endDrawer: PokeDrawer(selectedMenu: pokemonType.name),
       body: Stack(
         children: [
           ...background(),

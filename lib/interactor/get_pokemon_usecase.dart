@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:pokemon/core/datamodel/poke_stat.dart';
 import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
-import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/utils/either.dart';
 import 'package:pokemon/service/api/pokemon_api.dart';
 import 'package:pokemon/service/local/pokemon_local.dart';
@@ -39,9 +37,7 @@ extension on PokemonDetailResponse {
         images.first,
         weight,
         height,
-        pokemonType
-            .map((e) => PokemonType(e.id, e.name, _getColor(e.name)))
-            .toList(),
+        pokemonType.map((e) => PokemonType.parse(e.name)).toList(),
         abilities
             .map((e) => "${e.name} ${e.isHidden ? '(hidden)' : ''}")
             .toList(),
@@ -50,48 +46,5 @@ extension on PokemonDetailResponse {
       pokeStats.map((e) => PokeStat(e.value, e.name)).toList(),
       const [], // TODO(alifakbar): evolutions
     );
-  }
-
-  Color _getColor(String name) {
-    switch (name) {
-      case 'normal':
-        return PokeColor.normal;
-      case 'fighting':
-        return PokeColor.fighting;
-      case 'flying':
-        return PokeColor.flying;
-      case 'poison':
-        return PokeColor.poison;
-      case 'ground':
-        return PokeColor.ground;
-      case 'rock':
-        return PokeColor.rock;
-      case 'bug':
-        return PokeColor.bug;
-      case 'ghost':
-        return PokeColor.ghost;
-      case 'steel':
-        return PokeColor.steel;
-      case 'fire':
-        return PokeColor.fire;
-      case 'water':
-        return PokeColor.water;
-      case 'grass':
-        return PokeColor.grass;
-      case 'electric':
-        return PokeColor.electric;
-      case 'ice':
-        return PokeColor.ice;
-      case 'dragon':
-        return PokeColor.dragon;
-      case 'dark':
-        return PokeColor.dark;
-      case 'fairy':
-        return PokeColor.fairy;
-      case 'shadow':
-        return PokeColor.shadow;
-      default:
-        return PokeColor.unknown;
-    }
   }
 }

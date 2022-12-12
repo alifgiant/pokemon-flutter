@@ -3,7 +3,7 @@ mixin PokeText {
   /// Drawer
   static const homeMenu = "Home";
   static const typeMenu = "Pokemon Type";
-  static const typeItemMenu = "Pokemon Type %s";
+  static const typeItemMenu = "• Type %s";
 
   /// Welcome Screen
   static const heroText = "All the Pokémon data you'll ever need in one place!";
