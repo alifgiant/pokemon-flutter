@@ -43,6 +43,10 @@ class PokemonDetail extends Equatable {
   );
 
   @override
-  List<Object?> get props =>
-      [pokemon, ...otherImages, ...pokeStats, ...evolutions];
+  List<Object?> get props => [
+        pokemon,
+        ...otherImages,
+        ...pokeStats,
+        ...evolutions,
+      ];
 }

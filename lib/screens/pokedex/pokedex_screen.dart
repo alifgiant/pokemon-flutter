@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokemon/core/datamodel/poke_type.dart';
 import 'package:pokemon/core/datamodel/pokemon.dart';
 import 'package:pokemon/core/res/colors.dart';
 import 'package:pokemon/core/res/strings.dart';
 import 'package:pokemon/core/utils/bg_circle.dart';
+import 'package:pokemon/interactor/get_pokemon_usecase.dart';
+import 'package:pokemon/interactor/get_pokemons_usecase.dart';
 import 'package:pokemon/routes.dart';
 import 'package:pokemon/screens/pokedex/pokedex_item.dart';
 import 'package:pokemon/screens/pokedex/pokedex_sheet.dart';
+import 'package:pokemon/service/api/pokemon_api.dart';
+import 'package:pokemon/service/local/pokemon_local.dart';
 
 class PokedexScreen extends StatelessWidget {
   const PokedexScreen({super.key});
@@ -20,14 +25,18 @@ class PokedexScreen extends StatelessWidget {
       body: Stack(
         children: [
           ...background(),
-          foreground(),
-          SafeArea(
-            child: IconButton(
-              icon: const BackButtonIcon(),
-              onPressed: () => context.pop(),
-            ),
-          )
+          backButton(context),
+          _PokedexScreenForeground(),
         ],
+      ),
+    );
+  }
+
+  SafeArea backButton(BuildContext context) {
+    return SafeArea(
+      child: IconButton(
+        icon: const BackButtonIcon(),
+        onPressed: () => context.pop(),
       ),
     );
   }
@@ -44,8 +53,53 @@ class PokedexScreen extends StatelessWidget {
       ),
     ];
   }
+}
 
-  Widget foreground() {
+class _PokedexScreenForeground extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ForegroundState();
+}
+
+class _ForegroundState extends State<_PokedexScreenForeground> {
+  final PagingController<int, Pokemon> _pagingController =
+      PagingController(firstPageKey: 0);
+
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchPage(int pageKey) async {
+    final result = await GetPokemonsUsecase(
+      PokemonLocal(),
+      PokemonApi(),
+    ).start(offset: pageKey);
+
+    if (result.isRight()) {
+      final pokemons = result.asRight();
+      if (pokemons.isEmpty) {
+        _pagingController.appendLastPage([]);
+      } else {
+        _pagingController.appendPage(pokemons, pageKey + pokemons.length);
+      }
+    } else if (result.isLeft()) {
+      _pagingController.error = result.asLeft();
+    } else {
+      _pagingController.error = StateError('Please Refresh');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,13 +141,11 @@ class PokedexScreen extends StatelessWidget {
   }
 
   Widget content() {
-    final pokemons = List.filled(99, _pokemonDummy);
-    return ListView.separated(
+    return PagedListView<int, Pokemon>.separated(
+      pagingController: _pagingController,
       padding: const EdgeInsets.all(26),
-      itemCount: pokemons.length,
-      itemBuilder: (context, index) {
-        final pokemon = pokemons[index];
-        return PokedexItem(
+      builderDelegate: PagedChildBuilderDelegate<Pokemon>(
+        itemBuilder: (ctx, pokemon, index) => PokedexItem(
           key: ObjectKey(pokemon),
           pokemon: pokemon,
           onCardTap: (pokemon) => showModalBottomSheet(
@@ -104,26 +156,10 @@ class PokedexScreen extends StatelessWidget {
             ),
             builder: (context) => PokedexSheet(pokemon: pokemon),
           ),
-          onTypeTap: (type) => Routes.openTypeScreen(context, type),
-        );
-      },
+          onTypeTap: (type) => Routes.openTypeScreen(ctx, type),
+        ),
+      ),
       separatorBuilder: (context, index) => const SizedBox(height: 24),
     );
   }
 }
-
-const _pokemonDummy = Pokemon(
-  1,
-  'bulbasaur',
-  'https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/thumbnails-compressed/001.png',
-  9999,
-  999,
-  [
-    PokemonType(1, 'Plant', PokeColor.plant),
-    PokemonType(1, 'Steel', PokeColor.grey),
-  ],
-  [
-    'Abilities 1',
-    'Abilities 2 (Hidden)',
-  ],
-);
